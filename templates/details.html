@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %} details {% endblock %}
+
+{% block content %}
+<form action="/list">
+    <button>return to list</button>
+</form>
+<section>
+{{steps[0]}}
+<!-- {{steps[0]["steps"]}} -->
+<h1>{{steps[0].name}}</h1>
+<h2>Instructions :</h2>
+{% for step in steps[0]["steps"] %}
+<section>{{step["number"]}} : {{step["step"]}}</section>
+{% endfor %}
+</section>
+{% endblock %}

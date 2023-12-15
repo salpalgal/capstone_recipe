@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from api_key import api_key
-from forms import SignUpForm, LoginForm
+from forms import SignUpForm, LoginForm , RecipeSearchForm
 from sqlalchemy.exc import IntegrityError
 
-from models import db, connect_db, User
+from models import db, connect_db, User, Recipe
 
 CURR_USER_KEY = "curr_user"
 
@@ -50,16 +50,42 @@ def do_logout():
     # user = g.user
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
-        
 
-@app.route("/home")
-def root():
+@app.route("/recipe/<int:id>/details")
+def details(id):
+    # recipe = Recipe.query.get_or_404(recipe_id)
+    steps = requests.get(f"https://api.spoonacular.com/recipes/{id}/analyzedInstructions?apiKey={api_key}")
+    return render_template("details.html", steps = steps.json())
+    
+
+@app.route("/search", methods = ["GET", "POST"])
+def search():
+    form = RecipeSearchForm()
+    if form.validate_on_submit():
+        ingredients = form.ingredients.data
+        number = form.number.data
+        res =  requests.get(f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}",params={"ingredients": ingredients ,"number": number})
+        session["res"] = res.json()
+    
+
+        return redirect(url_for('.search_list',res = res) )
+    else:
+        return render_template("search.html", form= form)    
+
+@app.route("/list")
+def search_list():
     # res = requests.get(f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}",params={"ingredients":"chicken","number": 1})
     # res = requests.post(f"https://api.spoonacular.com/recipes/analyzeInstructions", params = {"apiKey": api_key,"id": 632075})
-    res = requests.get(f"https://api.spoonacular.com/recipes/632075/analyzedInstructions?apiKey={api_key}")
-    data = res.json()
-
-    return render_template("home.html", data= data)
+    # res = requests.get(f"https://api.spoonacular.com/recipes/632075/analyzedInstructions?apiKey={api_key}")
+    res = session["res"]
+    # data = res.json()
+    user = g.user 
+    for data in res:
+        recipe = Recipe( user_id = user.id, api_recipe_id = data['id'])
+        db.session.add(recipe)
+        db.session.commit()
+    recipes = user.recipes
+    return render_template("search_list.html", data= res ,user = user,recipes = recipes )
 
 @app.route("/signup", methods = ["GET","POST"])
 def signup():
@@ -81,7 +107,7 @@ def signup():
 
         do_login(user)
 
-        return redirect("/home")
+        return redirect("/search")
     else:
         return render_template("signup.html", form = form)
 
@@ -94,6 +120,11 @@ def login():
         if user:
             do_login(user)
             # flash(f"Hello, {user.username}!", "success")
-            return redirect('/home')
+            return redirect('/search')
         
     return render_template("login.html", form = form)
+
+@app.route("/logout")
+def logout():
+    do_logout()
+    return redirect("/login")

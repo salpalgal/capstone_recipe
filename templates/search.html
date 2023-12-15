@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} search {% endblock %}
+
+{% block content %}
+<form action="/logout">
+    <button>Logout</button>
+</form>
+<form action="/search", method = "POST">
+{{ form.hidden_tag() }}
+{% for field in form if field.widget.input_type != 'hidden'%}
+<label for="">{{field.name}}</label>
+{{field}}
+{% endfor %}
+<button>search</button>
+</form>
+{% endblock %}

@@ -14,6 +14,12 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+class Recipe(db.Model):
+    __tablename__ = 'recipes'
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete= 'CASCADE'), nullable = False)
+    api_recipe_id = db.Column(db.Integer, nullable = False)
+    user = db.relationship('User')
 
 class User(db.Model):
     """User in the system."""
@@ -51,6 +57,7 @@ class User(db.Model):
         nullable=False
     )
 
+    recipes = db.relationship('Recipe')
     @classmethod
     def signup(cls, username, password, email,image_url):
         """Sign up user.
@@ -88,3 +95,5 @@ class User(db.Model):
                 return user
 
         return False
+
+    

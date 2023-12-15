@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+</head>
+<body>
+    <span>Hello , {{user.username}} ! </span>
+    <form action="/logout">
+        <button>logout</button>
+    </form>
+    <h1>recipes list</h1>
+    
+    {% for d in data %}
+      <section>{{d}}</section>  
+        <section>
+            <a href="/recipe/{{d.id}}/details">{{d.title}} : {{d.id}}</a>
+            <span>Number of Missed Ingredients : {{d.missedIngredientCount}}</span>
+            <img src="{{d.image}}" alt="" width = 120>
+        </section>
+    {% endfor %}
+   
+</body>
+</html>
