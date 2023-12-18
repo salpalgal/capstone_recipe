@@ -14,6 +14,13 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+class Favorite(db.Model):
+    __tablename__ = 'favorites'
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete = 'CASCADE'), nullable = False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id', ondelete = 'CASCADE'), nullable = False)
+
+
 class Recipe(db.Model):
     __tablename__ = 'recipes'
     id = db.Column(db.Integer, primary_key = True)
@@ -58,6 +65,7 @@ class User(db.Model):
     )
 
     recipes = db.relationship('Recipe')
+    favorites = db.relationship('Recipe', secondary = 'favorites')
     @classmethod
     def signup(cls, username, password, email,image_url):
         """Sign up user.

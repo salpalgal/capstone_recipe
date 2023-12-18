@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} user's page {% endblock %}
+
+{% block content %}
+<h1>User Profile</h1>
+<section>
+    <img src="{{user.image_url}}" alt="" width = 200>
+    <h1>Hello , {{user.username}}</h1>
+    <form action="/user/{{user.id}}/edit ">
+        <button>Edit Profile</button>
+    </form>
+    
+</section>
+
+
+<section>
+    <h2>Favorite Recipes</h2>
+    {% for r in res %}
+    {% for fav in favs %}
+    {% if fav.api_recipe_id == r.id %}
+    <li>
+        {{r.title}}
+        <form action="/recipe/{{fav.id}}/unfav" method = "POST">
+            <button>unfav</button>
+        </form>
+        
+    </li>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+</section>
+{% endblock %}

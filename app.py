@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from api_key import api_key
-from forms import SignUpForm, LoginForm , RecipeSearchForm
+from forms import SignUpForm, LoginForm , RecipeSearchForm, EditProfileForm
 from sqlalchemy.exc import IntegrityError
 
-from models import db, connect_db, User, Recipe
+from models import db, connect_db, User, Recipe, Favorite
 
 CURR_USER_KEY = "curr_user"
 
@@ -51,15 +51,82 @@ def do_logout():
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
-@app.route("/recipe/<int:id>/details")
-def details(id):
+@app.route("/")
+def root():
+    return render_template("root.html")
+
+@app.route("/home")
+def home():
+    if g.user:
+        return render_template("home.html", user = g.user )
+    else:
+        flash("please login","error")
+        return redirect("/login")
+
+@app.route("/user/<int:user_id>/edit", methods = ["GET","POST"])
+def profile_update(user_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    user = g.user 
+    form = EditProfileForm(obj = user)
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data 
+        user.image_url = form.image_url.data
+        db.session.commit()
+        return redirect(f"/user/{user.id}") 
+    else:
+        return render_template("edit_profile.html", form = form, user = user)
+
+@app.route("/user/<int:user_id>")
+def user_page(user_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    user = g.user
+    favs = user.favorites
+    res = session["res"]
+    return render_template("user_page.html", favs= favs, res = res ,user = user )
+
+@app.route("/recipe/<int:recipe_id>/unfav", methods = ["POST"])
+def unfav(recipe_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    user = g.user
+    fav = Favorite.query.filter(Favorite.recipe_id == recipe_id).first()
+    db.session.delete(fav)
+    db.session.commit()
+    return redirect(f"/user/{user.id}")
+
+@app.route("/recipe/<int:recipe_id>/fav", methods = ["POST"])
+def fav(recipe_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    user = g.user
+    fav = Favorite(user_id = user.id, recipe_id = recipe_id)
+    db.session.add(fav)
+    db.session.commit()
+    return redirect(f"/user/{user.id}")
+    
+
+@app.route("/recipe/<int:recipe_id>/details")
+def details(recipe_id):
     # recipe = Recipe.query.get_or_404(recipe_id)
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
     steps = requests.get(f"https://api.spoonacular.com/recipes/{id}/analyzedInstructions?apiKey={api_key}")
     return render_template("details.html", steps = steps.json())
     
 
 @app.route("/search", methods = ["GET", "POST"])
 def search():
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
     form = RecipeSearchForm()
     if form.validate_on_submit():
         ingredients = form.ingredients.data
@@ -74,17 +141,23 @@ def search():
 
 @app.route("/list")
 def search_list():
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
     # res = requests.get(f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}",params={"ingredients":"chicken","number": 1})
     # res = requests.post(f"https://api.spoonacular.com/recipes/analyzeInstructions", params = {"apiKey": api_key,"id": 632075})
     # res = requests.get(f"https://api.spoonacular.com/recipes/632075/analyzedInstructions?apiKey={api_key}")
     res = session["res"]
     # data = res.json()
     user = g.user 
+    recipes = []
     for data in res:
         recipe = Recipe( user_id = user.id, api_recipe_id = data['id'])
         db.session.add(recipe)
         db.session.commit()
-    recipes = user.recipes
+        r = Recipe.query.filter(Recipe.api_recipe_id == data["id"]).first()
+        recipes.append(r)
+
     return render_template("search_list.html", data= res ,user = user,recipes = recipes )
 
 @app.route("/signup", methods = ["GET","POST"])
@@ -107,20 +180,21 @@ def signup():
 
         do_login(user)
 
-        return redirect("/search")
+        return redirect("/home")
     else:
         return render_template("signup.html", form = form)
 
 @app.route("/login", methods =["GET","POST"])
 def login():
     form = LoginForm()
+    user = g.user
     if form.validate_on_submit():
         user = User.authenticate(form.username.data, form.password.data)
         
         if user:
             do_login(user)
             # flash(f"Hello, {user.username}!", "success")
-            return redirect('/search')
+            return redirect("/home")
         
     return render_template("login.html", form = form)
 
