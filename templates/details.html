@@ -7,9 +7,28 @@
     <button>return to list</button>
 </form>
 <section>
-{{steps[0]}}
+<!-- {{steps[0]}} -->
 <!-- {{steps[0]["steps"]}} -->
-<h1>{{steps[0].name}}</h1>
+<!-- <h1>{{summary.titlt}}</h1> -->
+<h2>Summary</h2>
+<section>
+    <section>{{summary.summary|safe}}</section>
+</section>
+<h2>Ingredients</h2>
+<section>
+    <!-- {{ingredients.ingredients}} -->
+    {% for ingredient in ingredients.ingredients %}
+    <p>name : {{ingredient.name}} | amount : {{ingredient.amount.metric.value}}  {{ingredient.amount.metric.unit}}</p>
+    {% endfor %}
+</section>
+<h2>Nutrition</h2>
+<section>
+    <!-- {{nutrition}} -->
+    <p>calories : {{nutrition.calories}}</p>
+    <p>carbs : {{nutrition.carbs}}</p>
+    <p>fat : {{nutrition.fat}}</p>
+    <p>protein : {{nutrition.protein}}</p>
+</section>
 <h2>Instructions :</h2>
 {% for step in steps[0]["steps"] %}
 <section>{{step["number"]}} : {{step["step"]}}</section>

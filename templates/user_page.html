@@ -16,11 +16,11 @@
 
 <section>
     <h2>Favorite Recipes</h2>
-    {% for r in res %}
     {% for fav in favs %}
+    {% for r in res %}
     {% if fav.api_recipe_id == r.id %}
     <li>
-        {{r.title}}
+        <a href="/recipe/{{fav.id}}/details">{{r.title}}</a>
         <form action="/recipe/{{fav.id}}/unfav" method = "POST">
             <button>unfav</button>
         </form>
@@ -29,5 +29,6 @@
     {% endif %}
     {% endfor %}
     {% endfor %}
+    
 </section>
 {% endblock %}

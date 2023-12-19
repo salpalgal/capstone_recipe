@@ -6,6 +6,19 @@
     <title>{% block title%}{% endblock %}</title>
 </head>
 <body>
+    <section>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/user/{{user.id}}">Profile</a></li>
+            {% if user %}
+            <li><a href="/logout">Logout</a></li>
+            {% else %}
+            <li><a href="/login">Login</a></li>
+            {% endif %}
+            
+        </ul>
+    </section>
     {% for category, message in get_flashed_messages(with_categories=True) %}
     <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %}
