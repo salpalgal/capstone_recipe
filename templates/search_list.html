@@ -2,11 +2,13 @@
 {% block title %} search list {% endblock%}
 
 {% block content %}
+
+
 <span>Hello , {{user.username}} ! </span>
     <form action="/logout">
         <button>logout</button>
     </form>
-    <h1>recipes list</h1>
+    <h1> searched recipes list</h1>
     
     
    {% for recipe in recipes %}

@@ -3,6 +3,7 @@
 {% block title %} edit profile {% endblock %}
 
 {% block content %} 
+
 <form action="/user/{{user.id}}/edit" method = "POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden'%}

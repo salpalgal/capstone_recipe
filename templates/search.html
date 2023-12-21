@@ -3,14 +3,18 @@
 {% block title %} search {% endblock %}
 
 {% block content %}
-<form action="/logout">
-    <button>Logout</button>
-</form>
+
 <form action="/search", method = "POST">
 {{ form.hidden_tag() }}
 {% for field in form if field.widget.input_type != 'hidden'%}
+{% if field.name == "ingredients" %}
 <label for="">{{field.name}}</label>
-{{field}}
+{{field(placeholder="chicken, lemon, rosemary...")}}
+{% endif %}
+{% if field.name == "number" %}
+<label for="">{{field.name}}</label>
+{{field(placeholder="1-5")}}
+{% endif%}
 {% endfor %}
 <button>search</button>
 </form>

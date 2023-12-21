@@ -60,19 +60,8 @@ def root():
 def home():
     if g.user:
         user = g.user
-        randoms = requests.get(f"https://api.spoonacular.com/recipes/random?number=2&apiKey={api_key}")
-        rand_data = randoms.json()
-        recipes = []
         
-        for rand in rand_data["recipes"]:
-            api_id = rand['id']
-            recipe = Recipe(user_id = user.id, api_recipe_id = api_id)
-            recipes.append(rand['id'])
-            db.session.add(recipe)
-            db.session.commit
-            rec = Recipe.query.filter(Recipe.api_recipe_id == api_id).first()
-            recipes.append(rec)
-        return render_template("home.html", user = g.user,recipes = recipes , rand_data= rand_data )
+        return render_template("home.html", user = g.user)
     else:
         flash("please login","error")
         return redirect("/")
@@ -185,10 +174,11 @@ def search_list():
 
     return render_template("search_list.html", data= res ,user = user,recipes = recipes)
 
+
 @app.route("/signup", methods = ["GET","POST"])
 def signup():
-    form = SignUpForm()
     user = g.user
+    form = SignUpForm()
     if form.validate_on_submit():
         try:
             user = User.signup(
@@ -202,7 +192,7 @@ def signup():
 
         except IntegrityError:
             flash("Username already taken", 'danger')
-            return render_template('signup.html', form=form, user = user)
+            return render_template('signup.html', form=form)
 
         do_login(user)
 
@@ -227,4 +217,4 @@ def login():
 @app.route("/logout")
 def logout():
     do_logout()
-    return redirect("/login")
+    return redirect("/")

@@ -21,4 +21,4 @@ class LoginForm(FlaskForm):
 
 class RecipeSearchForm(FlaskForm):
     ingredients = TextAreaField("ingredients", validators = [DataRequired()])
-    number = IntegerField("number", validators= [DataRequired(), NumberRange(min = 1, max = 10)])
+    number = IntegerField("number", validators= [DataRequired(), NumberRange(min = 1, max = 5)])
