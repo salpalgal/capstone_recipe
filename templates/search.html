@@ -3,19 +3,27 @@
 {% block title %} search {% endblock %}
 
 {% block content %}
-
+<div class="container">
+<h1 class="display-1 my-4">Search Form</h1>
+<div class="row">
+<div class="col-md-6 border shadow rounded p-4">
 <form action="/search", method = "POST">
 {{ form.hidden_tag() }}
 {% for field in form if field.widget.input_type != 'hidden'%}
 {% if field.name == "ingredients" %}
+<div class="form-group">
 <label for="">{{field.name}}</label>
-{{field(placeholder="chicken, lemon, rosemary...")}}
+{{field(placeholder="chicken, lemon, rosemary...",class="form-control")}}
 {% endif %}
 {% if field.name == "number" %}
 <label for="">{{field.name}}</label>
-{{field(placeholder="1-5")}}
+{{field(placeholder="1-5",class="form-control")}}
+</div>
 {% endif%}
 {% endfor %}
-<button>search</button>
+<button class="btn btn-success btn-block">search</button>
 </form>
+</div>
+</div>
+</div>
 {% endblock %}

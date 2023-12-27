@@ -137,6 +137,7 @@ def details(recipe_id):
 
 @app.route("/search", methods = ["GET", "POST"])
 def search():
+    
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -154,6 +155,8 @@ def search():
 
 @app.route("/list")
 def search_list():
+    if not session["res"]:
+        res = []
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")

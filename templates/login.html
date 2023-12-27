@@ -3,17 +3,25 @@
 {% block title %} Login {% endblock %}
 
 {% block content %}
-
-<form action="/login" method = "POST">
-    {{ form.hidden_tag() }}
-    {% for field in form if field.widget.input_type != 'hidden'%}
-    {% for error in field.error %}
-    <span>{{error}}</span>
-    {% endfor %}
-    <label for=""> {{field.name}} : </label>
-    {{field}}
-    {% endfor %}
-    
-    <button>Login</button>
-</form>
+<div class="container">
+    <h1 class="display-1 my-4">Login Form</h1>
+    <div class="row">
+        <div class = "col-md-6 border shadow rounded p-4">
+        <form action="/login" method = "POST">
+        {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden'%}
+        {% for error in field.error %}
+        <span>{{error}}</span>
+        {% endfor %}
+        <div class = "form-group">
+        <label for=> {{field.name}} : </label>
+        {{field(class="form-control")}}
+        </div>
+        {% endfor %}
+        
+        <button class="btn btn-success btn-block">Login</button>
+    </form>
+</div>
+</div>
+</div>
 {% endblock %}

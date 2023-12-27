@@ -4,26 +4,31 @@
 {% block content %}
 
 
-<span>Hello , {{user.username}} ! </span>
-    <form action="/logout">
-        <button>logout</button>
-    </form>
-    <h1> searched recipes list</h1>
-    
+
+<div class="container">
+<h1 class="display-1 my-4"> searched recipes list</h1>
+<div class="row">   
     
    {% for recipe in recipes %}
    {% for d in data %}
    {% if recipe.api_recipe_id == d.id %}
-   <!-- <section>{{d}}</section>    -->
-   <section>
-        <a href="/recipe/{{recipe.id}}/details">{{d.title}} : {{d.id}}</a>
-        <span>Number of Missed Ingredients : {{d.missedIngredientCount}}</span>
-        <img src="{{d.image}}" alt="" width = 120>
+    
+    <div class=" card shadow rounded col-3 p-4 m-4">
+        <img src="{{d.image}}" alt="" class="img-fluid card-img-top">
+        <div class="card-body">
+        <h5 class="card-title"><a href="/recipe/{{recipe.id}}/details">{{d.title}}</a></h5>
+        
+        <p class="card-text">Missed Ingredients : {{d.missedIngredientCount}}</p>
+        
         <form action="/recipe/{{recipe.id}}/fav" method = "POST">
             <button>Favorite</button>
         </form>
-    </section> 
+        </div>
+    
+    </div> 
    {% endif %}
    {% endfor %}
    {% endfor %}
+</div>
+</div>
 {% endblock%}
