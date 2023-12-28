@@ -155,15 +155,18 @@ def search():
 
 @app.route("/list")
 def search_list():
-    if not session["res"]:
-        res = []
+   
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
     # res = requests.get(f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}",params={"ingredients":"chicken","number": 1})
     # res = requests.post(f"https://api.spoonacular.com/recipes/analyzeInstructions", params = {"apiKey": api_key,"id": 632075})
     # res = requests.get(f"https://api.spoonacular.com/recipes/632075/analyzedInstructions?apiKey={api_key}")
-    res = session["res"]
+    if session.get("res") == None:
+        res = []
+    else:
+        res = session.get("res")
+   
     # data = res.json()
     user = g.user 
     recipes = []
@@ -206,7 +209,7 @@ def signup():
 @app.route("/login", methods =["GET","POST"])
 def login():
     form = LoginForm()
-    user = g.user
+    # user = g.user
     if form.validate_on_submit():
         user = User.authenticate(form.username.data, form.password.data)
         
@@ -215,9 +218,11 @@ def login():
             # flash(f"Hello, {user.username}!", "success")
             return redirect("/home")
         
-    return render_template("login.html", form = form, user = user)
+    return render_template("login.html", form = form)
 
 @app.route("/logout")
 def logout():
     do_logout()
+    if session.get('res') == True:
+        session.pop("res")
     return redirect("/")
