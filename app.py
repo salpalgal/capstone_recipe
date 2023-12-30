@@ -132,7 +132,8 @@ def details(recipe_id):
     ingredients = requests.get(f"https://api.spoonacular.com/recipes/{recipe.api_recipe_id}/ingredientWidget.json?apiKey={api_key}")
     nutrition = requests.get(f"https://api.spoonacular.com/recipes/{recipe.api_recipe_id}/nutritionWidget.json?apiKey={api_key}")
     steps = requests.get(f"https://api.spoonacular.com/recipes/{recipe.api_recipe_id}/analyzedInstructions?apiKey={api_key}")
-    return render_template("details.html", steps = steps.json(), user = g.user, nutrition = nutrition.json(), summary = sum_data, ingredients = ingredients.json())
+    steps_data = steps.json()
+    return render_template("details.html", steps = steps_data[0]["steps"], user = g.user, nutrition = nutrition.json(), summary = sum_data, ingredients = ingredients.json())
     
 
 @app.route("/search", methods = ["GET", "POST"])

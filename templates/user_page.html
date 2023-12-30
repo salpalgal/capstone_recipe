@@ -3,33 +3,47 @@
 {% block title %} user's page {% endblock %}
 
 {% block content %}
-
-<h1>User Profile</h1>
-<section>
-    <img src="{{user.image_url}}" alt="" width = 200>
-    <h1>Hello , {{user.username}}</h1>
+<div class="container">
+<h1 class="display-1">Hello, {{user.username}}</h1>
+<div class="row">
+<div class="col-3 my-5 " align="center">
+    <div >
+    <img src="{{user.image_url}}" class="rounded-circle border"alt="" width = 200>
+    </div>
+    <div style="height:30px"></div>
+    <div>
     <form action="/user/{{user.id}}/edit ">
-        <button>Edit Profile</button>
+        <button class="btn btn-outline-dark btn-lg rounded-circle"><i class="fa-regular fa-address-card"></i></button>
     </form>
+    </div>
+</div>  
+
+<div class="col-1"></div>
+
+<div class="col-8 my-5  ">
+    <h3 class="display-4">Favorite Recipes</h3>
+    <hr/>
+    <div class="row">
     
-</section>
-
-
-<section>
-    <h2>Favorite Recipes</h2>
     {% for fav in favs %}
     {% for r in res %}
     {% if fav.api_recipe_id == r.id %}
-    <li>
-        <a href="/recipe/{{fav.id}}/details">{{r.title}}</a>
+    
+    <div class="col-3 p-4 m-4  shadow rounded " align="center">
+        <h5 class="card-title"><a href="/recipe/{{fav.id}}/details">{{r.title}}</a></h5>
         <form action="/recipe/{{fav.id}}/unfav" method = "POST">
-            <button>unfav</button>
+            <button class="btn btn-outline-success shadow btn-lg"><i class="fa-regular fa-thumbs-down"></i></button>
         </form>
-        
-    </li>
+    
+    </div>
+    
+    
     {% endif %}
     {% endfor %}
     {% endfor %}
-    
-</section>
+</div>   
+</div>
+
+</div>
+</div>
 {% endblock %}

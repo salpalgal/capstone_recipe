@@ -3,36 +3,34 @@
 {% block title %} details {% endblock %}
 
 {% block content %}
+<div class="container">
 
-<form action="/list">
-    <button>return to list</button>
-</form>
-<section>
-<!-- {{steps[0]}} -->
-<!-- {{steps[0]["steps"]}} -->
-<!-- <h1>{{summary.titlt}}</h1> -->
-<h2>Summary</h2>
-<section>
+<div class="row">
+    <div class="col-11 m-3">
+    <h2 class="display-3">{{summary.title}}</h2>
     <section>{{summary.summary|safe}}</section>
-</section>
-<h2>Ingredients</h2>
-<section>
-    <!-- {{ingredients.ingredients}} -->
-    {% for ingredient in ingredients.ingredients %}
-    <p>name : {{ingredient.name}} | amount : {{ingredient.amount.metric.value}}  {{ingredient.amount.metric.unit}}</p>
-    {% endfor %}
-</section>
-<h2>Nutrition</h2>
-<section>
-    <!-- {{nutrition}} -->
+
+</div>
+</div>
+<div class="row">
+<div class=" col-3 m-3">
+    <h2>Nutrition</h2>
     <p>calories : {{nutrition.calories}}</p>
     <p>carbs : {{nutrition.carbs}}</p>
     <p>fat : {{nutrition.fat}}</p>
     <p>protein : {{nutrition.protein}}</p>
-</section>
+    <h2>Ingredients</h2>
+    {% for ingredient in ingredients.ingredients %}
+    <p>{{ingredient.name}} | {{ingredient.amount.metric.value}}  {{ingredient.amount.metric.unit}}</p>
+    {% endfor %}
+</div>
+<div class="col-8 m-3">
 <h2>Instructions :</h2>
-{% for step in steps[0]["steps"] %}
+{% for step in steps %}
 <section>{{step["number"]}} : {{step["step"]}}</section>
 {% endfor %}
 </section>
+</div>
+</div>
+</div>
 {% endblock %}
