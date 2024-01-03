@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
-from api_key import api_key
+# from api_key import api_key
 from forms import SignUpForm, LoginForm , RecipeSearchForm, EditProfileForm
 from sqlalchemy.exc import IntegrityError
 
